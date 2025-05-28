@@ -129,17 +129,37 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </ul>
 <hr>
 <h3>2. <strong>两者的主要区别</strong></h3>
-<p>| <strong>方面</strong>               | <code class="notranslate">127.0.0.1</code>                          |<br>
-<code class="notranslate">0.0.0.0</code>                          |<br>
-|------------------------|---------------------------------------|---------||------------------------|---------------------------------------|--------------------------------------|<br>
-| <strong>表示的接口</strong>         | 只绑定到环回接口（本地主机）。       | 绑定到所有<br>
-网络接口。                |<br>
-| <strong>访问范围</strong>           | 只能通过本地设备访问。                | 可以通过<br>
-本地和外部网络访问。        |<br>
-| <strong>数据传输</strong>           | 数据在本地循环，不会离开设备。         | 数据可以<br>
-通过任意可用的网络接口发送或接收。 |<br>
-| <strong>用途</strong>               | 测试本地服务、进程间通信。             | 配置服务<br>
-器，允许外部连接。          |</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th align="left"><strong>方面</strong></th>
+<th align="left"><code class="notranslate">127.0.0.1</code></th>
+<th align="left"><code class="notranslate">0.0.0.0</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>表示的接口</strong></td>
+<td align="left">只绑定到环回接口（本地主机）。</td>
+<td align="left">绑定到所有网络接口。</td>
+</tr>
+<tr>
+<td align="left"><strong>访问范围</strong></td>
+<td align="left">只能通过本地设备访问。</td>
+<td align="left">可以通过本地和外部网络访问。</td>
+</tr>
+<tr>
+<td align="left"><strong>数据传输</strong></td>
+<td align="left">数据在本地循环，不会离开设备。</td>
+<td align="left">数据可以通过任意可用的网络接口发送或接收。</td>
+</tr>
+<tr>
+<td align="left"><strong>用途</strong></td>
+<td align="left">测试本地服务、进程间通信。</td>
+<td align="left">配置服务器，允许外部连接。</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
 <hr>
 <h3>3. <strong>常见用途</strong></h3>
 <ul>
