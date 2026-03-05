@@ -10,14 +10,21 @@
 .title-right{display:flex;margin:auto 0 0 auto;gap:8px;align-items:center;flex-wrap:wrap;}
 .title-right .circle{padding:10px 12px;border-radius:999px;}
 
-.subnav-search{display:flex;align-items:center;width:270px;max-width:100%;position:relative;}
+.subnav-search{display:flex;align-items:center;width:280px;max-width:100%;position:relative;}
 .subnav-search-input{flex:1;border-top-right-radius:0;border-bottom-right-radius:0;height:36px;}
-.subnav-search button{padding:7px 10px;border-top-left-radius:0;border-bottom-left-radius:0;height:36px;}
+.subnav-search button{padding:7px 11px;border-top-left-radius:0;border-bottom-left-radius:0;height:36px;}
 .subnav-search-icon{position:absolute;left:10px;opacity:.65;pointer-events:none;}
 .subnav-search-input{padding-left:30px;}
 
 #taglabel{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
-#taglabel .Label{margin:0;padding:5px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);}
+#taglabel .Label{
+    margin:0;
+    padding:5px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    transition:transform .15s ease, filter .15s ease;
+}
+#taglabel .Label:hover{transform:translateY(-1px);filter:saturate(1.08);}
 .Counter{color:#fff;background-color:rgba(234,238,242,0.38);}
 
 .SideNav{display:grid;gap:10px;}
@@ -30,12 +37,21 @@
     padding:12px 14px;
 }
 .SideNav-item:hover{background:var(--meek-accent-soft);text-decoration:none;}
-.SideNav-icon{margin-right:10px}
+.SideNav-icon{margin-right:10px;opacity:.88;}
 .d-flex{min-width:0;}
 .listTitle{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:100%;font-weight:600;}
 .listLabels{white-space:nowrap;display:flex;gap:6px;}
 .listLabels .Label{margin:0;color:#fff;padding:3px 8px;border-radius:999px;}
-.notFind{display:none;font-size:18px;margin:10px 2px;color:var(--meek-muted);}
+.notFind{
+    display:none;
+    font-size:16px;
+    margin:14px 2px;
+    color:var(--meek-muted);
+    border:1px dashed var(--meek-border);
+    border-radius:10px;
+    padding:10px 12px;
+    background:color-mix(in oklab, var(--meek-panel) 82%, transparent);
+}
 
 @media (max-width: 760px){
     .tagTitle{display:none;}

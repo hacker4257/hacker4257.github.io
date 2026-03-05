@@ -21,27 +21,42 @@
 .title-right{display:flex;margin:4px 0 0 auto;gap:6px;flex-wrap:wrap;}
 .title-right .circle{padding:10px 12px;border-radius:999px;}
 
-#postMeta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:8px 0 18px;color:var(--meek-muted);font-size:13px;}
+#postMeta{
+    display:flex;
+    justify-content:flex-start;
+    gap:10px;
+    align-items:center;
+    margin:8px 0 18px;
+    color:var(--meek-muted);
+    font-size:13px;
+}
+#postMeta .post-date{
+    padding:2px 10px;
+    border-radius:999px;
+    border:1px solid var(--meek-border);
+    background:var(--meek-panel);
+}
 #postBody{
-    border-bottom:1px solid var(--meek-border);
-    padding:22px clamp(14px,2.4vw,28px) 28px;
+    border:1px solid var(--meek-border);
+    padding:24px clamp(15px,2.6vw,30px) 30px;
     background:var(--meek-panel);
     border-radius:var(--meek-radius);
     box-shadow:var(--meek-shadow);
 }
 #postBody hr{height:2px;}
-#postBody.markdown-body{font-size:16px;line-height:1.8;}
+#postBody.markdown-body{font-size:16px;line-height:1.82;}
 #postBody.markdown-body p,
 #postBody.markdown-body ul,
 #postBody.markdown-body ol,
-#postBody.markdown-body blockquote{margin-top:0;margin-bottom:1.05em;}
+#postBody.markdown-body blockquote{margin-top:0;margin-bottom:1.08em;}
 #postBody.markdown-body h1,
 #postBody.markdown-body h2,
 #postBody.markdown-body h3,
 #postBody.markdown-body h4,
 #postBody.markdown-body h5,
-#postBody.markdown-body h6{line-height:1.35;}
+#postBody.markdown-body h6{line-height:1.35;margin-top:1.25em;}
 #postBody pre{margin:1em 0;border-radius:10px;}
+#postBody blockquote{border-left:3px solid var(--meek-accent);padding-left:12px;color:var(--meek-muted);}
 #cmButton{height:46px;margin-top:30px;border-radius:999px;}
 #comments{margin-top:42px;}
 .g-emoji{font-size:24px;}
@@ -62,8 +77,7 @@
 
 @media (max-width: 760px){
     .postTitle{font-size:24px;}
-    #postMeta{display:block;}
-    #postBody{padding:14px 12px 18px;}
+    #postBody{padding:15px 12px 20px;}
     #comments{margin-top:32px;}
 }
 </style>
@@ -97,8 +111,7 @@
 
 {% block content %}
 <div id="postMeta">
-    <span>{{ blogBase.get('createdDate','') }}</span>
-    <span>{{ blogBase['description'] }}</span>
+    <span class="post-date">{{ blogBase.get('createdDate','') }}</span>
 </div>
 <div class="markdown-body" id="postBody">{{ blogBase['postBody'] }}</div>
 <div id="bottomText">{{ blogBase['bottomText'] }}</div>
