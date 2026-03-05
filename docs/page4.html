@@ -185,200 +185,6 @@ a:hover{text-decoration:none;}
         </svg>
         <div class="post-main-text">
             <span class="listTitle">如何使用Kubeadm设置Kubernetes集群</span>
-            <span class="listDesc">### 实验环境
-MacBook Pro 16-inch, 2019
-
-处理器: 2.4 GHz 8-Core Intel Core i9
-
-内存: 32 GB 2667 MHz DDR4
-
-macos:  Sonoma version 14.2.1 (23C71)
-
-使用UTM虚拟机工具创建3台ubuntu20.04-arm64，虚拟机配置均为2核4G, 采用1个master， 2个node的构架
-
-###  部署架构规划
-| 角色 | 主机名 | 组件 | IP |
-|-------|-------|-------|-------|
-| master | master | etcd、apiserver、controller-manager、scheduler、kubelet、proxy、calico、runc |192.168.64.18
-|node01|node01|pod、kubelet、proxy、calico、runc|192.168.64.19
-|node01|node01|pod、kubelet、proxy、calico、runc|192.168.64.20
-
-### 软件版本
-*docker server ：24.0.7
-
-*containerd ：1.7.12
-
-*kubeadm : v1.30.0
-
-*kubelet : v1.30.0
-
-*kubectl : v1.30.0
-
-### 集群服务初始化 （3*， 所有机器都执行）
-#### 切换为管理员
-```shell
-sudo su
-```
-#### 添加主机名
-```shell
-cat &gt;&gt; /etc/hosts &lt;&lt;EOF
-192.168.64.18 master
-192.168.64.19 node01
-192.168.64.20 node02
-EOF
-
-```
-#### 时间同步
-```shell
-apt update &amp;&amp; apt install ntpdate
-ntpdate cn.ntp.org.cn
-```
-#### 关闭防火墙
-```shell
-systemctl disable ufw &amp;&amp; systemctl stop ufw
-```
-#### 关闭swap分区
-```shell
-swapoff -a  # 临时关闭
-sed -ri &#39;s/.swap*./#&amp;/g&#39; /etc/fstab   # 修改配置文件 sed修改配置文件永久关闭
-```
-#### 启用iptables桥接流量
-```shell
-# 添加配置文件
-cat &lt;&lt;EOF | sudo tee /etc/modules-load.d/k8s.conf
-overlay
-br_netfilter
-EOF
-
-# 加载模块
-modprobe overlay
-modprobe br_netfilter
-
-# 设置所需的Sysctl参数，参数在重新启动时保持不变
-cat  &lt;&lt;EOF | tee /etc/sysctl.d/k8s.conf
-net.bridge.bridge-nf-call-iptables = 1
-net.bridge.bridge-nf-call-ip6tables = 1
-net.ipv4.ip_forward = 1
-vm.swappiness = 0
-EOF
-
-# 不重启就应用sysctl参数
-sysctl --system
-
-# 保守建议
-reboot
-```
-#### 安装容器运行时
-k8s支持的容器运行时有很多如docker、containerd、cri-o等等，docker 省事一些，这里选择安装docker
-```shell
-# 安装docker
-apt-get update
-apt install -y docker.io
-
-# 设置docker开机自启
-systemctl start docker
-ststemctl enable docker
-
-# 三个服务都应是running状态
-systemctl status containerd.service
-systemctl status docker.service
-systemctl status docker.socket
-```
-
-#### 配置容器运行时的systemd驱动
-```shell
-
-vim /etc/docker/daemon.json 
-
-```
-然后将下面设置加入daemon.js
-```shell
-{
-  &#39;exec-opts&#39;: [
-    &#39;native.cgroupdriver=systemd&#39;
-  ]
-}
-
-```
-重启docker
-```shell 
-systemctl restart docker
-```
-#### 设置Kubernetes APT存储库的GPG密钥
-```shell 
-KUBERNETES_VERSION=1.30
-
-sudo mkdir -p /etc/apt/keyrings
-
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v$KUBERNETES_VERSION/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-
-echo &#39;deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v$KUBERNETES_VERSION/deb/ /&#39; | sudo tee /etc/apt/sources.list.d/kubernetes.list
-
-
-```
- 更新 apt 仓库
- ```shell
- apt-get update -y
- ```
- #### 安装Kubernetes组件
- ```shell 
- 
- # 安装一些辅助包
-apt-get install -y apt-transport-https ca-certificates curl gpg
- 
-# 安装指定版本
-apt-get install -y kubelet=1.30.0-1.1 kubectl=1.30.0-1.1 kubeadm=1.30.0-1.1
-
-# 确认服务状态（此时kubelet暂未启动）
-systemctl status kubelet
- ```
- ### Kubernetes 初始化（只在master操作）
- ```shell
-kubeadm init \
-  --control-plane-endpoint=&#39;192.168.64.18&#39; \
-  --service-cidr=10.96.0.0/12 \
-  --pod-network-cidr=10.244.0.0/16 \
-  --ignore-preflight-errors=all
-  
-# –-apiserver-advertise-address # 集群通告地址，单master时为控制面使用的的服务器IP
-# –-service-cidr #集群内部虚拟网络，Pod统一访问入口，可以不用更改，直接用上面的参数
-# –-pod-network-cidr #Pod网络，与下面部署的CNI网络组件yaml中保持一致，可以不用更改，直接用上面的参数
-
- ```
- 初始化成功显示如下
- ```shell
- Your Kubernetes control-plane has initialized successfully!
-
-To start using your cluster, you need to run the following as a regular user:
-
-  mkdir -p $HOME/.kube
-  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-  sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
-Alternatively, if you are the root user, you can run:
-
-  export KUBECONFIG=/etc/kubernetes/admin.conf
-
-You should now deploy a pod network to the cluster.
-Run &#39;kubectl apply -f [podnetwork].yaml&#39; with one of the options listed at:
-  https://kubernetes.io/docs/concepts/cluster-administration/addons/
-
-You can now join any number of the control-plane node running the following command on each as root:
-
-  kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
-	--discovery-token-ca-cert-hash sha256:205a991b66a2ec879bd36f66851725fd84201d7306bb088ceda8835ad99450b8 \
-	--control-plane --certificate-key 34a274a91255cf25cda3af0f6ecbfc2876e97196491338aab72ca1b3bd09e1d1
-
-Please note that the certificate-key gives access to cluster sensitive data, keep it secret!
-As a safeguard, uploaded-certs will be deleted in two hours; If necessary, you can use
-&#39;kubeadm init phase upload-certs --upload-certs&#39; to reload certs afterward.
-
-Then you can join any number of worker nodes by running the following on each as root:
-
-kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
-	--discovery-token-ca-cert-hash sha256:205a991b66a2ec879bd36f66851725fd84201d7306bb088ceda8835ad99450b8 
- ```
- 从输出中使用以下命令在master中创建kubeconfig，以便您可以使用kubectl与集群API交互。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -395,8 +201,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">设计模式之备忘录模式</span>
-            <span class="listDesc">## 备忘录模式
-备忘录模式是一种行为设计模式，它允许保存和恢复对象的内部状态，而无需暴露该对象的实现细节。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -413,9 +217,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">设计模式之模板方法模式</span>
-            <span class="listDesc">## 模板方法模式
-
-模板方法模式是一种行为型设计模式，它定义了一个操作中的算法的框架，并将一些步骤的执行延迟到子类中。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -432,9 +233,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">设计模式之迭代器模式</span>
-            <span class="listDesc">## 迭代器模式
-
-迭代器模式（Iterator Pattern）是一种行为设计模式，它提供了一种顺序访问集合对象中各个元素的方法，而不需要暴露该对象的内部表示。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -451,9 +249,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">从零学数据结构</span>
-            <span class="listDesc"># 第一课：数据结构概述和数组
-
-在这一课中，我们将首先了解数据结构的基本概念，然后深入学习数组这一基本数据结构。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -470,9 +265,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">设计模式之函数选项模式</span>
-            <span class="listDesc">## 函数选项模式
-
-函数选项模式（Functional Options Pattern）在Go语言中是一种流行的设计模式，用于构建灵活且易于扩展的API。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -489,8 +281,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">设计模式之组合模式</span>
-            <span class="listDesc">## 组合模式
-组合模式是一种结构型设计模式，用于将对象组织成树形结构以表示部分-整体的层次关系。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -507,9 +297,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">设计模式之适配器模式</span>
-            <span class="listDesc">## 适配器模式
-
-适配器模式（Adapter Pattern）是一种结构型设计模式，它允许不兼容的接口之间进行交互。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -526,7 +313,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">设计模式之策略模式</span>
-            <span class="listDesc">策略模式（Strategy Pattern）是一种常用的设计模式，属于行为型模式。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -543,8 +329,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">设计模式之访问模式</span>
-            <span class="listDesc">
-访问模式（Visitor Pattern）是一种行为型设计模式，它允许在不修改已有程序结构的情况下，向已有的对象结构中添加新的操作。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -561,8 +345,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">设计模式之观察者模式</span>
-            <span class="listDesc">## 观察者模式
-观察者模式（Observer Pattern）是一种常用的软件设计模式，属于行为型模式。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -579,8 +361,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">设计模式之命令模式</span>
-            <span class="listDesc">## 命令模式
-命令模式（Command Pattern）是一种行为型设计模式，它主要目的是将请求或简单操作封装为一个对象。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -597,7 +377,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">设计模式之模板模式</span>
-            <span class="listDesc">模板方法模式是一种行为设计模式，它定义了一个算法的骨架，允许子类在不改变算法结构的情况下重定义算法的某些特定步骤。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -614,11 +393,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">从零学Go系列第一课</span>
-            <span class="listDesc">## 基础篇
-### 第一步：安装Go
-
-1. 访问Go语言的官方网站：https://golang.org/
-2. 点击下载页面，选择适合你的操作系统的安装包（Windows、macOS或Linux）。</span>
         </div>
     </div>
     <div class="listLabels">
@@ -635,9 +409,6 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
         </svg>
         <div class="post-main-text">
             <span class="listTitle">二分查找：高效解决排序问题的算法</span>
-            <span class="listDesc">## 引言
-
-在计算机科学中，查找问题是非常常见的任务之一，尤其是在处理大量数据时。</span>
         </div>
     </div>
     <div class="listLabels">
