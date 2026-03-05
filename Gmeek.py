@@ -310,6 +310,7 @@ class GMEEK():
         postBase["head"]=issue["head"]
         postBase["top"]=issue["top"]
         postBase["postSourceUrl"]=issue["postSourceUrl"]
+        postBase["createdDate"]=issue.get("createdDate", "")
         postBase["repoName"]=options.repo_name
         
         if issue["labels"][0] in self.blogBase["singlePage"]:

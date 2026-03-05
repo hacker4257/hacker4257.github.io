@@ -17,18 +17,36 @@
 
 {% block style %}
 <style>
-.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
-.title-right{display:flex;margin:auto 0 0 auto;}
-.title-right .circle{padding: 14px 16px;margin-right:8px;}
-#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
-#postBody hr{height:2px;}
-#cmButton{height:48px;margin-top:48px;}
-#comments{margin-top:64px;}
-.g-emoji{font-size:24px;}
-@media (max-width: 600px) {
-    body {padding: 8px;}
-    .postTitle{font-size:24px;}
+.postTitle{margin:0;font-size:clamp(24px,4vw,38px);font-weight:760;line-height:1.2;letter-spacing:0.01em;word-break:break-word;}
+.title-right{display:flex;margin:4px 0 0 auto;gap:6px;flex-wrap:wrap;}
+.title-right .circle{padding:10px 12px;border-radius:999px;}
+
+#postMeta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:8px 0 18px;color:var(--meek-muted);font-size:13px;}
+#postBody{
+    border-bottom:1px solid var(--meek-border);
+    padding:22px clamp(14px,2.4vw,28px) 28px;
+    background:var(--meek-panel);
+    border-radius:var(--meek-radius);
+    box-shadow:var(--meek-shadow);
 }
+#postBody hr{height:2px;}
+#postBody.markdown-body{font-size:16px;line-height:1.8;}
+#postBody.markdown-body p,
+#postBody.markdown-body ul,
+#postBody.markdown-body ol,
+#postBody.markdown-body blockquote{margin-top:0;margin-bottom:1.05em;}
+#postBody.markdown-body h1,
+#postBody.markdown-body h2,
+#postBody.markdown-body h3,
+#postBody.markdown-body h4,
+#postBody.markdown-body h5,
+#postBody.markdown-body h6{line-height:1.35;}
+#postBody pre{margin:1em 0;border-radius:10px;}
+#cmButton{height:46px;margin-top:30px;border-radius:999px;}
+#comments{margin-top:42px;}
+.g-emoji{font-size:24px;}
+#bottomText{font-size:12px;margin-top:10px;text-align:right;color:var(--meek-muted);}
+
 {% if blogBase['highlight']!=0 -%}
 .copy-feedback {
     display: none;
@@ -41,6 +59,13 @@
     padding: 5px 8px;
     font-size: 12px;
 }{% endif %}
+
+@media (max-width: 760px){
+    .postTitle{font-size:24px;}
+    #postMeta{display:block;}
+    #postBody{padding:14px 12px 18px;}
+    #comments{margin-top:32px;}
+}
 </style>
 {{ blogBase['style'] }}
 
@@ -54,7 +79,7 @@
         </svg>
     </a>
     {% if blogBase['showPostSource']==1 %}
-    <a href="https://github.com/" target="_blank" class="btn btn-invisible circle" title="Issue">
+    <a href="{{ blogBase['postSourceUrl'] }}" target="_blank" class="btn btn-invisible circle" title="Issue">
         <svg class="octicon" width="16" height="16">
             <path id="pathIssue" fill-rule="evenodd"></path>
         </svg>
@@ -71,8 +96,12 @@
 {% endblock %}
 
 {% block content %}
+<div id="postMeta">
+    <span>{{ blogBase.get('createdDate','') }}</span>
+    <span>{{ blogBase['description'] }}</span>
+</div>
 <div class="markdown-body" id="postBody">{{ blogBase['postBody'] }}</div>
-<div style="font-size:small;margin-top:8px;float:right;">{{ blogBase['bottomText'] }}</div>
+<div id="bottomText">{{ blogBase['bottomText'] }}</div>
 {% if blogBase['needComment']==1 %}
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">{{ i18n['comments'] }}</button>
 <div class="comments" id="comments"></div>

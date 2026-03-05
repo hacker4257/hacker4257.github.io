@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="{{ blogBase['nightTheme'] }}" data-light-theme="{{ blogBase['dayTheme'] }}" lang={% if blogBase['i18n']=='CN' %}"zh-CN"{% elif blogBase['i18n']=='RU' %}"ru"{% else -%}"en"{%- endif -%}>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    {{ blogBase['primerCSS'] }}
+    {{ blogBase['allHead'] }}
+    <link rel="icon" href="{{ blogBase['faviconUrl'] }}">
+    {%- if blogBase['themeMode']=='manual' -%}
+    <script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+    {%- endif -%}
+    {% block head %}{% endblock %}
+</head>
+<style>
+:root{
+    --meek-bg:#f7f9fc;
+    --meek-fg:#1f2328;
+    --meek-muted:#59636e;
+    --meek-panel:#ffffff;
+    --meek-border:rgba(31,35,40,0.14);
+    --meek-strong-border:rgba(31,35,40,0.24);
+    --meek-accent:#0969da;
+    --meek-accent-soft:rgba(9,105,218,0.12);
+    --meek-shadow:0 10px 28px rgba(31,35,40,0.08);
+    --meek-radius:14px;
+    --meek-gap:16px;
+    --meek-font:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+}
+[data-color-mode="dark"]{
+    --meek-bg:#0d1117;
+    --meek-fg:#e6edf3;
+    --meek-muted:#8b949e;
+    --meek-panel:#151b23;
+    --meek-border:rgba(230,237,243,0.18);
+    --meek-strong-border:rgba(230,237,243,0.28);
+    --meek-accent:#58a6ff;
+    --meek-accent-soft:rgba(88,166,255,0.18);
+    --meek-shadow:0 14px 30px rgba(1,4,9,0.5);
+}
+*{box-sizing:border-box;}
+body{
+    margin:0;
+    padding:26px 18px;
+    background:var(--meek-bg);
+    color:var(--meek-fg);
+    font-size:16px;
+    line-height:1.6;
+    font-family:var(--meek-font);
+}
+#appShell{max-width:980px;margin:0 auto;}
+#header{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:4px 0 18px;
+    border-bottom:1px solid var(--meek-border);
+}
+#content{padding-top:18px;min-height:45vh;}
+#footer{
+    margin-top:54px;
+    padding-top:18px;
+    border-top:1px solid var(--meek-border);
+    color:var(--meek-muted);
+    font-size:13px;
+}
+#footer a{color:inherit;}
+a{color:var(--meek-accent);}
+a:hover{text-decoration:none;}
+.markdown-body{
+    background:transparent;
+    color:inherit;
+}
+@media (max-width: 760px){
+    body{padding:12px 10px 18px;}
+    #header{padding-bottom:14px;gap:8px;}
+    #content{padding-top:12px;}
+    #footer{margin-top:40px;}
+}
+</style>
+{% block style %}{% endblock %}
+<body>
+    <div id="appShell">
+        <div id="header">{% block header %}{% endblock %}</div>
+        <div id="content">{% block content %}{% endblock %}</div>
+        <div id="footer">{% include 'footer.html' %}</div>
+    </div>
+</body>
+<script>
+var IconList={{ IconList }};
+var utterancesLoad=0;
+{% if blogBase['themeMode']=='manual' %}
+let themeSettings={
+    "dark": ["dark","moon","#58a6ff","dark-blue"],
+    "light": ["light","sun","#d1242f","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+{%- endif %}
+console.log("\n %c Gmeek {{ blogBase['GMEEK_VERSION'] }} https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+{% block script %}{% endblock %}
+</html>
