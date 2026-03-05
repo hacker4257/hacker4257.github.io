@@ -444,6 +444,7 @@ class GMEEK():
             postNum="P"+str(issue.number)
             previous_issue = self.previousIssueMeta.get(str(issue.number), {})
             self.blogBase[listJsonName][postNum]=json.loads('{}')
+            self.blogBase[listJsonName][postNum]["htmlDir"]=gen_Html
             self.blogBase[listJsonName][postNum]["labels"]=[label.name for label in issue.labels]
             self.blogBase[listJsonName][postNum]["postTitle"]=issue.title
             self.blogBase[listJsonName][postNum]["postUrl"]=urllib.parse.quote(gen_Html[len(self.root_dir):])
