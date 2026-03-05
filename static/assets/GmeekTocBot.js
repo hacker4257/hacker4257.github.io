@@ -27,11 +27,7 @@ function createTOC() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    createTOC();
-    var css = '.toc {position:fixed;top:130px;left:50%;transform: translateX(50%) translateX(300px);width:200px;padding-left:30px;}@media (max-width: 1249px) {.toc{position:static;top:auto;left:auto;transform:none;padding:10px;margin-bottom:20px;background-color:var(--color-open-muted);}}';
-    loadResource('style', {css: css});
-
+function initTOCResources() {
     loadResource('script', { src: 'https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.27.4/tocbot.min.js' }, function() {
         tocbot.init({
             tocSelector: '.toc',
@@ -44,6 +40,12 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     loadResource('link', { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.27.4/tocbot.css' });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    createTOC();
+    var css = '.toc {position:fixed;top:130px;left:50%;transform: translateX(50%) translateX(300px);width:200px;padding-left:30px;}@media (max-width: 1249px) {.toc{position:static;top:auto;left:auto;transform:none;padding:10px;margin-bottom:20px;background-color:var(--color-open-muted);}}';
+    loadResource('style', {css: css});
 
     const headings = document.querySelectorAll('.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6');
     headings.forEach((heading) => {
@@ -55,4 +57,25 @@ document.addEventListener("DOMContentLoaded", function() {
     var footerPlaceholder = document.createElement('div');
     footerPlaceholder.style.height = window.innerHeight + 'px';
     document.body.appendChild(footerPlaceholder);
+
+    const activate = function(){
+        if (typeof requestIdleCallback === 'function') {
+            requestIdleCallback(initTOCResources, { timeout: 2000 });
+        } else {
+            setTimeout(initTOCResources, 800);
+        }
+    };
+
+    if ('IntersectionObserver' in window) {
+        var trigger = document.querySelector('.markdown-body') || document.body;
+        var io = new IntersectionObserver(function(entries) {
+            if (entries.some(function(entry){return entry.isIntersecting;})) {
+                io.disconnect();
+                activate();
+            }
+        }, { rootMargin: '500px' });
+        io.observe(trigger);
+    } else {
+        activate();
+    }
 });
