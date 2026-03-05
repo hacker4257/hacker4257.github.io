@@ -23,7 +23,10 @@
 <meta property="og:url" content="https://hacker4257.github.io//post/shen-ru-qian-chu-%EF%BC%9A-sheng-cheng-shu-xie-yi-%28STP%29-wan-quan-zhi-nan.html">
 <meta property="og:image" content="https://hacker4257.github.io/ava.jpeg">
 <title>深入浅出：生成树协议(STP)完全指南</title>
-<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+<link rel="preload" href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" /></noscript>
+
 
 
 </head>
@@ -222,16 +225,16 @@ Switch(config-if)<span class="pl-c"><span class="pl-c">#</span> spanning-tree co
 <h2>总结</h2>
 <p>STP通过巧妙的算法和状态管理，优雅地解决了网络环路问题。虽然它不是完美的（比如收敛时间较长），但它的设计思想值得我们学习。随着网络技术的发展，我们现在有了RSTP、MSTP等更先进的协议，但理解STP的基本原理仍然是网络工程师的必修课。</p>
 <h3>技术演进</h3>
-<div class="highlight highlight-source-mermaid"><pre class="notranslate">timeline
-    title STP协议演进史
-    section 早期
-        1985 : 原始STP : IEEE 802.1D
-    section 发展
-        1998 : PVST+ : 思科专有
-        2001 : RSTP : IEEE 802.1w
-    section 现代
-        2003 : MSTP : IEEE 802.1s
-        现在 : 各种优化版本
+<div class="highlight highlight-source-mermaid"><pre class="notranslate"><span class="pl-k">timeline</span>
+    <span class="pl-k">title</span> <span class="pl-s">STP协议演进史</span>
+    <span class="pl-k">section</span> <span class="pl-s">早期</span>
+        <span class="pl-ent">1985 </span><span class="pl-k">:</span> <span class="pl-en">原始STP </span><span class="pl-k">:</span> <span class="pl-en">IEEE 802.1D</span>
+    <span class="pl-k">section</span> <span class="pl-s">发展</span>
+        <span class="pl-ent">1998 </span><span class="pl-k">:</span> <span class="pl-en">PVST+ </span><span class="pl-k">:</span> <span class="pl-en">思科专有</span>
+        <span class="pl-ent">2001 </span><span class="pl-k">:</span> <span class="pl-en">RSTP </span><span class="pl-k">:</span> <span class="pl-en">IEEE 802.1w</span>
+    <span class="pl-k">section</span> <span class="pl-s">现代</span>
+        <span class="pl-ent">2003 </span><span class="pl-k">:</span> <span class="pl-en">MSTP </span><span class="pl-k">:</span> <span class="pl-en">IEEE 802.1s</span>
+        <span class="pl-ent">现在 </span><span class="pl-k">:</span> <span class="pl-en">各种优化版本</span>
 </pre></div>
 <p>你有什么关于STP的经历或疑问吗？欢迎在评论区分享你的想法和经验！</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>

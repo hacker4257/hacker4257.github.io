@@ -21,7 +21,10 @@
 <meta property="og:url" content="https://hacker4257.github.io//post/wei-tu-BitMap%EF%BC%9A-yi-zhong-fei-chang-gao-xiao-de-cun-chu-he-cha-xun-shu-ju-jie-gou.html">
 <meta property="og:image" content="https://hacker4257.github.io/ava.jpeg">
 <title>位图BitMap：一种非常高效的存储和查询数据结构</title>
-<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+<link rel="preload" href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" /></noscript>
+
 
 
 </head>
@@ -378,7 +381,11 @@ console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 
 <script>
 document.getElementById("pathHome").setAttribute("d",IconList["home"]);
 document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
-
+cmButton=document.getElementById("cmButton");
+    span=document.createElement("span");
+    span.setAttribute("class","Counter");
+    span.innerHTML="1";
+    cmButton.appendChild(span);
 
 
 function openComments(){
