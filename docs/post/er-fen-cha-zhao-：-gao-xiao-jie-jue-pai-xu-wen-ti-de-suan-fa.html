@@ -22,6 +22,9 @@
 <meta property="og:image" content="https://hacker4257.github.io/ava.jpeg">
 <title>二分查找：高效解决排序问题的算法</title>
 
+<link rel="preload" href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" /></noscript>
+
 
 
 </head>
@@ -54,24 +57,27 @@
 *{box-sizing:border-box;}
 body{
     margin:0;
-    padding:26px 18px;
-    background:var(--meek-bg);
+    padding:26px 18px 34px;
+    background:
+        radial-gradient(900px 340px at 18% -8%, var(--meek-accent-soft), transparent 62%),
+        radial-gradient(760px 280px at 92% -12%, rgba(127,127,127,0.08), transparent 64%),
+        var(--meek-bg);
     color:var(--meek-fg);
     font-size:16px;
-    line-height:1.6;
+    line-height:1.62;
     font-family:var(--meek-font);
 }
-#appShell{max-width:980px;margin:0 auto;}
+#appShell{max-width:1000px;margin:0 auto;}
 #header{
     display:flex;
-    align-items:flex-start;
+    align-items:center;
     gap:12px;
-    padding:4px 0 18px;
+    padding:8px 0 18px;
     border-bottom:1px solid var(--meek-border);
 }
-#content{padding-top:18px;min-height:45vh;}
+#content{padding-top:20px;min-height:45vh;}
 #footer{
-    margin-top:54px;
+    margin-top:56px;
     padding-top:18px;
     border-top:1px solid var(--meek-border);
     color:var(--meek-muted);
@@ -80,13 +86,19 @@ body{
 #footer a{color:inherit;}
 a{color:var(--meek-accent);}
 a:hover{text-decoration:none;}
-.markdown-body{
-    background:transparent;
-    color:inherit;
+.markdown-body{background:transparent;color:inherit;}
+.btn.btn-invisible.circle{
+    border:1px solid transparent;
+    transition:background .2s ease,border-color .2s ease,transform .2s ease;
+}
+.btn.btn-invisible.circle:hover{
+    background:var(--meek-accent-soft);
+    border-color:var(--meek-border);
+    transform:translateY(-1px);
 }
 @media (max-width: 760px){
-    body{padding:12px 10px 18px;}
-    #header{padding-bottom:14px;gap:8px;}
+    body{padding:12px 10px 20px;}
+    #header{padding-bottom:14px;gap:8px;align-items:flex-start;}
     #content{padding-top:12px;}
     #footer{margin-top:40px;}
 }
@@ -97,27 +109,42 @@ a:hover{text-decoration:none;}
 .title-right{display:flex;margin:4px 0 0 auto;gap:6px;flex-wrap:wrap;}
 .title-right .circle{padding:10px 12px;border-radius:999px;}
 
-#postMeta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:8px 0 18px;color:var(--meek-muted);font-size:13px;}
+#postMeta{
+    display:flex;
+    justify-content:flex-start;
+    gap:10px;
+    align-items:center;
+    margin:8px 0 18px;
+    color:var(--meek-muted);
+    font-size:13px;
+}
+#postMeta .post-date{
+    padding:2px 10px;
+    border-radius:999px;
+    border:1px solid var(--meek-border);
+    background:var(--meek-panel);
+}
 #postBody{
-    border-bottom:1px solid var(--meek-border);
-    padding:22px clamp(14px,2.4vw,28px) 28px;
+    border:1px solid var(--meek-border);
+    padding:24px clamp(15px,2.6vw,30px) 30px;
     background:var(--meek-panel);
     border-radius:var(--meek-radius);
     box-shadow:var(--meek-shadow);
 }
 #postBody hr{height:2px;}
-#postBody.markdown-body{font-size:16px;line-height:1.8;}
+#postBody.markdown-body{font-size:16px;line-height:1.82;}
 #postBody.markdown-body p,
 #postBody.markdown-body ul,
 #postBody.markdown-body ol,
-#postBody.markdown-body blockquote{margin-top:0;margin-bottom:1.05em;}
+#postBody.markdown-body blockquote{margin-top:0;margin-bottom:1.08em;}
 #postBody.markdown-body h1,
 #postBody.markdown-body h2,
 #postBody.markdown-body h3,
 #postBody.markdown-body h4,
 #postBody.markdown-body h5,
-#postBody.markdown-body h6{line-height:1.35;}
+#postBody.markdown-body h6{line-height:1.35;margin-top:1.25em;}
 #postBody pre{margin:1em 0;border-radius:10px;}
+#postBody blockquote{border-left:3px solid var(--meek-accent);padding-left:12px;color:var(--meek-muted);}
 #cmButton{height:46px;margin-top:30px;border-radius:999px;}
 #comments{margin-top:42px;}
 .g-emoji{font-size:24px;}
@@ -137,8 +164,7 @@ a:hover{text-decoration:none;}
 
 @media (max-width: 760px){
     .postTitle{font-size:24px;}
-    #postMeta{display:block;}
-    #postBody{padding:14px 12px 18px;}
+    #postBody{padding:15px 12px 20px;}
     #comments{margin-top:32px;}
 }
 </style>
@@ -173,10 +199,7 @@ a:hover{text-decoration:none;}
 </div>
         <div id="content">
 <div id="postMeta">
-    <span>2022-08-10</span>
-    <span>## 引言
-
-在计算机科学中，查找问题是非常常见的任务之一，尤其是在处理大量数据时。</span>
+    <span class="post-date">2022-08-10</span>
 </div>
 <div class="markdown-body" id="postBody"><h2>引言</h2>
 <p>在计算机科学中，查找问题是非常常见的任务之一，尤其是在处理大量数据时。<strong>二分查找</strong>是一种经典的高效查找算法，它利用有序数组的性质，将查找范围逐步减半，从而在每次比较后迅速缩小搜索空间。这使得二分查找的时间复杂度为<code class="notranslate">O(log n)</code>，远远优于线性查找的<code class="notranslate">O(n)</code>。</p>
@@ -207,36 +230,34 @@ a:hover{text-decoration:none;}
 <hr>
 <h2>Python 实现</h2>
 <h3>1. 迭代实现</h3>
-<pre lang="python" class="notranslate"><code class="notranslate">def binary_search(arr, target):
-    low = 0
-    high = len(arr) - 1
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">binary_search</span>(<span class="pl-s1">arr</span>, <span class="pl-s1">target</span>):
+    <span class="pl-s1">low</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>
+    <span class="pl-s1">high</span> <span class="pl-c1">=</span> <span class="pl-en">len</span>(<span class="pl-s1">arr</span>) <span class="pl-c1">-</span> <span class="pl-c1">1</span>
     
-    while low &lt;= high:
-        mid = (low + high) // 2
+    <span class="pl-k">while</span> <span class="pl-s1">low</span> <span class="pl-c1">&lt;=</span> <span class="pl-s1">high</span>:
+        <span class="pl-s1">mid</span> <span class="pl-c1">=</span> (<span class="pl-s1">low</span> <span class="pl-c1">+</span> <span class="pl-s1">high</span>) <span class="pl-c1">//</span> <span class="pl-c1">2</span>
         
-        if arr[mid] == target:
-            return mid
-        elif arr[mid] &lt; target:
-            low = mid + 1
-        else:
-            high = mid - 1
+        <span class="pl-k">if</span> <span class="pl-s1">arr</span>[<span class="pl-s1">mid</span>] <span class="pl-c1">==</span> <span class="pl-s1">target</span>:
+            <span class="pl-k">return</span> <span class="pl-s1">mid</span>
+        <span class="pl-k">elif</span> <span class="pl-s1">arr</span>[<span class="pl-s1">mid</span>] <span class="pl-c1">&lt;</span> <span class="pl-s1">target</span>:
+            <span class="pl-s1">low</span> <span class="pl-c1">=</span> <span class="pl-s1">mid</span> <span class="pl-c1">+</span> <span class="pl-c1">1</span>
+        <span class="pl-k">else</span>:
+            <span class="pl-s1">high</span> <span class="pl-c1">=</span> <span class="pl-s1">mid</span> <span class="pl-c1">-</span> <span class="pl-c1">1</span>
     
-    return -1
-</code></pre>
+    <span class="pl-k">return</span> <span class="pl-c1">-</span><span class="pl-c1">1</span></pre></div>
 <h3>2. 递归实现</h3>
-<pre lang="python" class="notranslate"><code class="notranslate">def binary_search_recursive(arr, target, low, high):
-    if low &gt; high:
-        return -1
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">binary_search_recursive</span>(<span class="pl-s1">arr</span>, <span class="pl-s1">target</span>, <span class="pl-s1">low</span>, <span class="pl-s1">high</span>):
+    <span class="pl-k">if</span> <span class="pl-s1">low</span> <span class="pl-c1">&gt;</span> <span class="pl-s1">high</span>:
+        <span class="pl-k">return</span> <span class="pl-c1">-</span><span class="pl-c1">1</span>
     
-    mid = (low + high) // 2
+    <span class="pl-s1">mid</span> <span class="pl-c1">=</span> (<span class="pl-s1">low</span> <span class="pl-c1">+</span> <span class="pl-s1">high</span>) <span class="pl-c1">//</span> <span class="pl-c1">2</span>
     
-    if arr[mid] == target:
-        return mid
-    elif arr[mid] &lt; target:
-        return binary_search_recursive(arr, target, mid + 1, high)
-    else:
-        return binary_search_recursive(arr, target, low, mid - 1)
-</code></pre>
+    <span class="pl-k">if</span> <span class="pl-s1">arr</span>[<span class="pl-s1">mid</span>] <span class="pl-c1">==</span> <span class="pl-s1">target</span>:
+        <span class="pl-k">return</span> <span class="pl-s1">mid</span>
+    <span class="pl-k">elif</span> <span class="pl-s1">arr</span>[<span class="pl-s1">mid</span>] <span class="pl-c1">&lt;</span> <span class="pl-s1">target</span>:
+        <span class="pl-k">return</span> <span class="pl-en">binary_search_recursive</span>(<span class="pl-s1">arr</span>, <span class="pl-s1">target</span>, <span class="pl-s1">mid</span> <span class="pl-c1">+</span> <span class="pl-c1">1</span>, <span class="pl-s1">high</span>)
+    <span class="pl-k">else</span>:
+        <span class="pl-k">return</span> <span class="pl-en">binary_search_recursive</span>(<span class="pl-s1">arr</span>, <span class="pl-s1">target</span>, <span class="pl-s1">low</span>, <span class="pl-s1">mid</span> <span class="pl-c1">-</span> <span class="pl-c1">1</span>)</pre></div>
 <h3>代码说明</h3>
 <ul>
 <li>
@@ -249,17 +270,16 @@ a:hover{text-decoration:none;}
 <hr>
 <h2>示例</h2>
 <p>我们使用一个简单的示例来展示二分查找的效果。假设有一个有序数组：</p>
-<pre lang="python" class="notranslate"><code class="notranslate">arr = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
-target = 7
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-s1">arr</span> <span class="pl-c1">=</span> [<span class="pl-c1">1</span>, <span class="pl-c1">3</span>, <span class="pl-c1">5</span>, <span class="pl-c1">7</span>, <span class="pl-c1">9</span>, <span class="pl-c1">11</span>, <span class="pl-c1">13</span>, <span class="pl-c1">15</span>, <span class="pl-c1">17</span>, <span class="pl-c1">19</span>]
+<span class="pl-s1">target</span> <span class="pl-c1">=</span> <span class="pl-c1">7</span>
 
-# 调用迭代版
-index = binary_search(arr, target)
-print(f"目标值 {target} 的下标是: {index}")
+<span class="pl-c"># 调用迭代版</span>
+<span class="pl-s1">index</span> <span class="pl-c1">=</span> <span class="pl-en">binary_search</span>(<span class="pl-s1">arr</span>, <span class="pl-s1">target</span>)
+<span class="pl-en">print</span>(<span class="pl-s">f"目标值 <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">target</span><span class="pl-kos">}</span></span> 的下标是: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">index</span><span class="pl-kos">}</span></span>"</span>)
 
-# 调用递归版
-index = binary_search_recursive(arr, target, 0, len(arr) - 1)
-print(f"目标值 {target} 的下标是: {index}")
-</code></pre>
+<span class="pl-c"># 调用递归版</span>
+<span class="pl-s1">index</span> <span class="pl-c1">=</span> <span class="pl-en">binary_search_recursive</span>(<span class="pl-s1">arr</span>, <span class="pl-s1">target</span>, <span class="pl-c1">0</span>, <span class="pl-en">len</span>(<span class="pl-s1">arr</span>) <span class="pl-c1">-</span> <span class="pl-c1">1</span>)
+<span class="pl-en">print</span>(<span class="pl-s">f"目标值 <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">target</span><span class="pl-kos">}</span></span> 的下标是: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">index</span><span class="pl-kos">}</span></span>"</span>)</pre></div>
 <p><strong>输出：</strong></p>
 <pre class="notranslate"><code class="notranslate">目标值 7 的下标是: 3
 目标值 7 的下标是: 3

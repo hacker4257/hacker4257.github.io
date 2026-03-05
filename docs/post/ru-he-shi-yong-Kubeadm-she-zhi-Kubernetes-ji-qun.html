@@ -439,24 +439,27 @@ kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
 *{box-sizing:border-box;}
 body{
     margin:0;
-    padding:26px 18px;
-    background:var(--meek-bg);
+    padding:26px 18px 34px;
+    background:
+        radial-gradient(900px 340px at 18% -8%, var(--meek-accent-soft), transparent 62%),
+        radial-gradient(760px 280px at 92% -12%, rgba(127,127,127,0.08), transparent 64%),
+        var(--meek-bg);
     color:var(--meek-fg);
     font-size:16px;
-    line-height:1.6;
+    line-height:1.62;
     font-family:var(--meek-font);
 }
-#appShell{max-width:980px;margin:0 auto;}
+#appShell{max-width:1000px;margin:0 auto;}
 #header{
     display:flex;
-    align-items:flex-start;
+    align-items:center;
     gap:12px;
-    padding:4px 0 18px;
+    padding:8px 0 18px;
     border-bottom:1px solid var(--meek-border);
 }
-#content{padding-top:18px;min-height:45vh;}
+#content{padding-top:20px;min-height:45vh;}
 #footer{
-    margin-top:54px;
+    margin-top:56px;
     padding-top:18px;
     border-top:1px solid var(--meek-border);
     color:var(--meek-muted);
@@ -465,13 +468,19 @@ body{
 #footer a{color:inherit;}
 a{color:var(--meek-accent);}
 a:hover{text-decoration:none;}
-.markdown-body{
-    background:transparent;
-    color:inherit;
+.markdown-body{background:transparent;color:inherit;}
+.btn.btn-invisible.circle{
+    border:1px solid transparent;
+    transition:background .2s ease,border-color .2s ease,transform .2s ease;
+}
+.btn.btn-invisible.circle:hover{
+    background:var(--meek-accent-soft);
+    border-color:var(--meek-border);
+    transform:translateY(-1px);
 }
 @media (max-width: 760px){
-    body{padding:12px 10px 18px;}
-    #header{padding-bottom:14px;gap:8px;}
+    body{padding:12px 10px 20px;}
+    #header{padding-bottom:14px;gap:8px;align-items:flex-start;}
     #content{padding-top:12px;}
     #footer{margin-top:40px;}
 }
@@ -482,27 +491,42 @@ a:hover{text-decoration:none;}
 .title-right{display:flex;margin:4px 0 0 auto;gap:6px;flex-wrap:wrap;}
 .title-right .circle{padding:10px 12px;border-radius:999px;}
 
-#postMeta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:8px 0 18px;color:var(--meek-muted);font-size:13px;}
+#postMeta{
+    display:flex;
+    justify-content:flex-start;
+    gap:10px;
+    align-items:center;
+    margin:8px 0 18px;
+    color:var(--meek-muted);
+    font-size:13px;
+}
+#postMeta .post-date{
+    padding:2px 10px;
+    border-radius:999px;
+    border:1px solid var(--meek-border);
+    background:var(--meek-panel);
+}
 #postBody{
-    border-bottom:1px solid var(--meek-border);
-    padding:22px clamp(14px,2.4vw,28px) 28px;
+    border:1px solid var(--meek-border);
+    padding:24px clamp(15px,2.6vw,30px) 30px;
     background:var(--meek-panel);
     border-radius:var(--meek-radius);
     box-shadow:var(--meek-shadow);
 }
 #postBody hr{height:2px;}
-#postBody.markdown-body{font-size:16px;line-height:1.8;}
+#postBody.markdown-body{font-size:16px;line-height:1.82;}
 #postBody.markdown-body p,
 #postBody.markdown-body ul,
 #postBody.markdown-body ol,
-#postBody.markdown-body blockquote{margin-top:0;margin-bottom:1.05em;}
+#postBody.markdown-body blockquote{margin-top:0;margin-bottom:1.08em;}
 #postBody.markdown-body h1,
 #postBody.markdown-body h2,
 #postBody.markdown-body h3,
 #postBody.markdown-body h4,
 #postBody.markdown-body h5,
-#postBody.markdown-body h6{line-height:1.35;}
+#postBody.markdown-body h6{line-height:1.35;margin-top:1.25em;}
 #postBody pre{margin:1em 0;border-radius:10px;}
+#postBody blockquote{border-left:3px solid var(--meek-accent);padding-left:12px;color:var(--meek-muted);}
 #cmButton{height:46px;margin-top:30px;border-radius:999px;}
 #comments{margin-top:42px;}
 .g-emoji{font-size:24px;}
@@ -522,8 +546,7 @@ a:hover{text-decoration:none;}
 
 @media (max-width: 760px){
     .postTitle{font-size:24px;}
-    #postMeta{display:block;}
-    #postBody{padding:14px 12px 18px;}
+    #postBody{padding:15px 12px 20px;}
     #comments{margin-top:32px;}
 }
 </style>
@@ -558,201 +581,7 @@ a:hover{text-decoration:none;}
 </div>
         <div id="content">
 <div id="postMeta">
-    <span>2024-09-30</span>
-    <span>### 实验环境
-MacBook Pro 16-inch, 2019
-
-处理器: 2.4 GHz 8-Core Intel Core i9
-
-内存: 32 GB 2667 MHz DDR4
-
-macos:  Sonoma version 14.2.1 (23C71)
-
-使用UTM虚拟机工具创建3台ubuntu20.04-arm64，虚拟机配置均为2核4G, 采用1个master， 2个node的构架
-
-###  部署架构规划
-| 角色 | 主机名 | 组件 | IP |
-|-------|-------|-------|-------|
-| master | master | etcd、apiserver、controller-manager、scheduler、kubelet、proxy、calico、runc |192.168.64.18
-|node01|node01|pod、kubelet、proxy、calico、runc|192.168.64.19
-|node01|node01|pod、kubelet、proxy、calico、runc|192.168.64.20
-
-### 软件版本
-*docker server ：24.0.7
-
-*containerd ：1.7.12
-
-*kubeadm : v1.30.0
-
-*kubelet : v1.30.0
-
-*kubectl : v1.30.0
-
-### 集群服务初始化 （3*， 所有机器都执行）
-#### 切换为管理员
-```shell
-sudo su
-```
-#### 添加主机名
-```shell
-cat >> /etc/hosts <<EOF
-192.168.64.18 master
-192.168.64.19 node01
-192.168.64.20 node02
-EOF
-
-```
-#### 时间同步
-```shell
-apt update && apt install ntpdate
-ntpdate cn.ntp.org.cn
-```
-#### 关闭防火墙
-```shell
-systemctl disable ufw && systemctl stop ufw
-```
-#### 关闭swap分区
-```shell
-swapoff -a  # 临时关闭
-sed -ri 's/.swap*./#&/g' /etc/fstab   # 修改配置文件 sed修改配置文件永久关闭
-```
-#### 启用iptables桥接流量
-```shell
-# 添加配置文件
-cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
-overlay
-br_netfilter
-EOF
-
-# 加载模块
-modprobe overlay
-modprobe br_netfilter
-
-# 设置所需的Sysctl参数，参数在重新启动时保持不变
-cat  <<EOF | tee /etc/sysctl.d/k8s.conf
-net.bridge.bridge-nf-call-iptables = 1
-net.bridge.bridge-nf-call-ip6tables = 1
-net.ipv4.ip_forward = 1
-vm.swappiness = 0
-EOF
-
-# 不重启就应用sysctl参数
-sysctl --system
-
-# 保守建议
-reboot
-```
-#### 安装容器运行时
-k8s支持的容器运行时有很多如docker、containerd、cri-o等等，docker 省事一些，这里选择安装docker
-```shell
-# 安装docker
-apt-get update
-apt install -y docker.io
-
-# 设置docker开机自启
-systemctl start docker
-ststemctl enable docker
-
-# 三个服务都应是running状态
-systemctl status containerd.service
-systemctl status docker.service
-systemctl status docker.socket
-```
-
-#### 配置容器运行时的systemd驱动
-```shell
-
-vim /etc/docker/daemon.json 
-
-```
-然后将下面设置加入daemon.js
-```shell
-{
-  'exec-opts': [
-    'native.cgroupdriver=systemd'
-  ]
-}
-
-```
-重启docker
-```shell 
-systemctl restart docker
-```
-#### 设置Kubernetes APT存储库的GPG密钥
-```shell 
-KUBERNETES_VERSION=1.30
-
-sudo mkdir -p /etc/apt/keyrings
-
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v$KUBERNETES_VERSION/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v$KUBERNETES_VERSION/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
-
-
-```
- 更新 apt 仓库
- ```shell
- apt-get update -y
- ```
- #### 安装Kubernetes组件
- ```shell 
- 
- # 安装一些辅助包
-apt-get install -y apt-transport-https ca-certificates curl gpg
- 
-# 安装指定版本
-apt-get install -y kubelet=1.30.0-1.1 kubectl=1.30.0-1.1 kubeadm=1.30.0-1.1
-
-# 确认服务状态（此时kubelet暂未启动）
-systemctl status kubelet
- ```
- ### Kubernetes 初始化（只在master操作）
- ```shell
-kubeadm init \
-  --control-plane-endpoint='192.168.64.18' \
-  --service-cidr=10.96.0.0/12 \
-  --pod-network-cidr=10.244.0.0/16 \
-  --ignore-preflight-errors=all
-  
-# –-apiserver-advertise-address # 集群通告地址，单master时为控制面使用的的服务器IP
-# –-service-cidr #集群内部虚拟网络，Pod统一访问入口，可以不用更改，直接用上面的参数
-# –-pod-network-cidr #Pod网络，与下面部署的CNI网络组件yaml中保持一致，可以不用更改，直接用上面的参数
-
- ```
- 初始化成功显示如下
- ```shell
- Your Kubernetes control-plane has initialized successfully!
-
-To start using your cluster, you need to run the following as a regular user:
-
-  mkdir -p $HOME/.kube
-  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-  sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
-Alternatively, if you are the root user, you can run:
-
-  export KUBECONFIG=/etc/kubernetes/admin.conf
-
-You should now deploy a pod network to the cluster.
-Run 'kubectl apply -f [podnetwork].yaml' with one of the options listed at:
-  https://kubernetes.io/docs/concepts/cluster-administration/addons/
-
-You can now join any number of the control-plane node running the following command on each as root:
-
-  kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
-	--discovery-token-ca-cert-hash sha256:205a991b66a2ec879bd36f66851725fd84201d7306bb088ceda8835ad99450b8 \
-	--control-plane --certificate-key 34a274a91255cf25cda3af0f6ecbfc2876e97196491338aab72ca1b3bd09e1d1
-
-Please note that the certificate-key gives access to cluster sensitive data, keep it secret!
-As a safeguard, uploaded-certs will be deleted in two hours; If necessary, you can use
-'kubeadm init phase upload-certs --upload-certs' to reload certs afterward.
-
-Then you can join any number of worker nodes by running the following on each as root:
-
-kubeadm join 192.168.64.18:6443 --token m5pstt.v2gebrasw9yfzxb6 \
-	--discovery-token-ca-cert-hash sha256:205a991b66a2ec879bd36f66851725fd84201d7306bb088ceda8835ad99450b8 
- ```
- 从输出中使用以下命令在master中创建kubeconfig，以便您可以使用kubectl与集群API交互。</span>
+    <span class="post-date">2024-09-30</span>
 </div>
 <div class="markdown-body" id="postBody"><h3>实验环境</h3>
 <p>MacBook Pro 16-inch, 2019</p>

@@ -52,24 +52,27 @@
 *{box-sizing:border-box;}
 body{
     margin:0;
-    padding:26px 18px;
-    background:var(--meek-bg);
+    padding:26px 18px 34px;
+    background:
+        radial-gradient(900px 340px at 18% -8%, var(--meek-accent-soft), transparent 62%),
+        radial-gradient(760px 280px at 92% -12%, rgba(127,127,127,0.08), transparent 64%),
+        var(--meek-bg);
     color:var(--meek-fg);
     font-size:16px;
-    line-height:1.6;
+    line-height:1.62;
     font-family:var(--meek-font);
 }
-#appShell{max-width:980px;margin:0 auto;}
+#appShell{max-width:1000px;margin:0 auto;}
 #header{
     display:flex;
-    align-items:flex-start;
+    align-items:center;
     gap:12px;
-    padding:4px 0 18px;
+    padding:8px 0 18px;
     border-bottom:1px solid var(--meek-border);
 }
-#content{padding-top:18px;min-height:45vh;}
+#content{padding-top:20px;min-height:45vh;}
 #footer{
-    margin-top:54px;
+    margin-top:56px;
     padding-top:18px;
     border-top:1px solid var(--meek-border);
     color:var(--meek-muted);
@@ -78,13 +81,19 @@ body{
 #footer a{color:inherit;}
 a{color:var(--meek-accent);}
 a:hover{text-decoration:none;}
-.markdown-body{
-    background:transparent;
-    color:inherit;
+.markdown-body{background:transparent;color:inherit;}
+.btn.btn-invisible.circle{
+    border:1px solid transparent;
+    transition:background .2s ease,border-color .2s ease,transform .2s ease;
+}
+.btn.btn-invisible.circle:hover{
+    background:var(--meek-accent-soft);
+    border-color:var(--meek-border);
+    transform:translateY(-1px);
 }
 @media (max-width: 760px){
-    body{padding:12px 10px 18px;}
-    #header{padding-bottom:14px;gap:8px;}
+    body{padding:12px 10px 20px;}
+    #header{padding-bottom:14px;gap:8px;align-items:flex-start;}
     #content{padding-top:12px;}
     #footer{margin-top:40px;}
 }
@@ -95,27 +104,42 @@ a:hover{text-decoration:none;}
 .title-right{display:flex;margin:4px 0 0 auto;gap:6px;flex-wrap:wrap;}
 .title-right .circle{padding:10px 12px;border-radius:999px;}
 
-#postMeta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:8px 0 18px;color:var(--meek-muted);font-size:13px;}
+#postMeta{
+    display:flex;
+    justify-content:flex-start;
+    gap:10px;
+    align-items:center;
+    margin:8px 0 18px;
+    color:var(--meek-muted);
+    font-size:13px;
+}
+#postMeta .post-date{
+    padding:2px 10px;
+    border-radius:999px;
+    border:1px solid var(--meek-border);
+    background:var(--meek-panel);
+}
 #postBody{
-    border-bottom:1px solid var(--meek-border);
-    padding:22px clamp(14px,2.4vw,28px) 28px;
+    border:1px solid var(--meek-border);
+    padding:24px clamp(15px,2.6vw,30px) 30px;
     background:var(--meek-panel);
     border-radius:var(--meek-radius);
     box-shadow:var(--meek-shadow);
 }
 #postBody hr{height:2px;}
-#postBody.markdown-body{font-size:16px;line-height:1.8;}
+#postBody.markdown-body{font-size:16px;line-height:1.82;}
 #postBody.markdown-body p,
 #postBody.markdown-body ul,
 #postBody.markdown-body ol,
-#postBody.markdown-body blockquote{margin-top:0;margin-bottom:1.05em;}
+#postBody.markdown-body blockquote{margin-top:0;margin-bottom:1.08em;}
 #postBody.markdown-body h1,
 #postBody.markdown-body h2,
 #postBody.markdown-body h3,
 #postBody.markdown-body h4,
 #postBody.markdown-body h5,
-#postBody.markdown-body h6{line-height:1.35;}
+#postBody.markdown-body h6{line-height:1.35;margin-top:1.25em;}
 #postBody pre{margin:1em 0;border-radius:10px;}
+#postBody blockquote{border-left:3px solid var(--meek-accent);padding-left:12px;color:var(--meek-muted);}
 #cmButton{height:46px;margin-top:30px;border-radius:999px;}
 #comments{margin-top:42px;}
 .g-emoji{font-size:24px;}
@@ -135,8 +159,7 @@ a:hover{text-decoration:none;}
 
 @media (max-width: 760px){
     .postTitle{font-size:24px;}
-    #postMeta{display:block;}
-    #postBody{padding:14px 12px 18px;}
+    #postBody{padding:15px 12px 20px;}
     #comments{margin-top:32px;}
 }
 </style>
@@ -171,9 +194,7 @@ a:hover{text-decoration:none;}
 </div>
         <div id="content">
 <div id="postMeta">
-    <span>2024-10-12</span>
-    <span>
-你有没有想过,计算机是如何理解单词、句子,甚至是图片的?今天,我们就来聊聊一个叫做'embedding'(嵌入)的神奇技术,它就像是计算机的'翻译官',帮助机器理解我们的世界。</span>
+    <span class="post-date">2024-10-12</span>
 </div>
 <div class="markdown-body" id="postBody"><p>你有没有想过,计算机是如何理解单词、句子,甚至是图片的?今天,我们就来聊聊一个叫做"embedding"(嵌入)的神奇技术,它就像是计算机的"翻译官",帮助机器理解我们的世界。</p>
 <h2>1. 什么是Embedding?</h2>

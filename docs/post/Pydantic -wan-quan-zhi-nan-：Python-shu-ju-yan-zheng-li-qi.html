@@ -26,9 +26,6 @@
 <meta property="og:image" content="https://hacker4257.github.io/ava.jpeg">
 <title>Pydantic 完全指南：Python数据验证利器</title>
 
-<link rel="preload" href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" /></noscript>
-
 
 
 </head>
@@ -61,24 +58,27 @@
 *{box-sizing:border-box;}
 body{
     margin:0;
-    padding:26px 18px;
-    background:var(--meek-bg);
+    padding:26px 18px 34px;
+    background:
+        radial-gradient(900px 340px at 18% -8%, var(--meek-accent-soft), transparent 62%),
+        radial-gradient(760px 280px at 92% -12%, rgba(127,127,127,0.08), transparent 64%),
+        var(--meek-bg);
     color:var(--meek-fg);
     font-size:16px;
-    line-height:1.6;
+    line-height:1.62;
     font-family:var(--meek-font);
 }
-#appShell{max-width:980px;margin:0 auto;}
+#appShell{max-width:1000px;margin:0 auto;}
 #header{
     display:flex;
-    align-items:flex-start;
+    align-items:center;
     gap:12px;
-    padding:4px 0 18px;
+    padding:8px 0 18px;
     border-bottom:1px solid var(--meek-border);
 }
-#content{padding-top:18px;min-height:45vh;}
+#content{padding-top:20px;min-height:45vh;}
 #footer{
-    margin-top:54px;
+    margin-top:56px;
     padding-top:18px;
     border-top:1px solid var(--meek-border);
     color:var(--meek-muted);
@@ -87,13 +87,19 @@ body{
 #footer a{color:inherit;}
 a{color:var(--meek-accent);}
 a:hover{text-decoration:none;}
-.markdown-body{
-    background:transparent;
-    color:inherit;
+.markdown-body{background:transparent;color:inherit;}
+.btn.btn-invisible.circle{
+    border:1px solid transparent;
+    transition:background .2s ease,border-color .2s ease,transform .2s ease;
+}
+.btn.btn-invisible.circle:hover{
+    background:var(--meek-accent-soft);
+    border-color:var(--meek-border);
+    transform:translateY(-1px);
 }
 @media (max-width: 760px){
-    body{padding:12px 10px 18px;}
-    #header{padding-bottom:14px;gap:8px;}
+    body{padding:12px 10px 20px;}
+    #header{padding-bottom:14px;gap:8px;align-items:flex-start;}
     #content{padding-top:12px;}
     #footer{margin-top:40px;}
 }
@@ -104,48 +110,52 @@ a:hover{text-decoration:none;}
 .title-right{display:flex;margin:4px 0 0 auto;gap:6px;flex-wrap:wrap;}
 .title-right .circle{padding:10px 12px;border-radius:999px;}
 
-#postMeta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:8px 0 18px;color:var(--meek-muted);font-size:13px;}
+#postMeta{
+    display:flex;
+    justify-content:flex-start;
+    gap:10px;
+    align-items:center;
+    margin:8px 0 18px;
+    color:var(--meek-muted);
+    font-size:13px;
+}
+#postMeta .post-date{
+    padding:2px 10px;
+    border-radius:999px;
+    border:1px solid var(--meek-border);
+    background:var(--meek-panel);
+}
 #postBody{
-    border-bottom:1px solid var(--meek-border);
-    padding:22px clamp(14px,2.4vw,28px) 28px;
+    border:1px solid var(--meek-border);
+    padding:24px clamp(15px,2.6vw,30px) 30px;
     background:var(--meek-panel);
     border-radius:var(--meek-radius);
     box-shadow:var(--meek-shadow);
 }
 #postBody hr{height:2px;}
-#postBody.markdown-body{font-size:16px;line-height:1.8;}
+#postBody.markdown-body{font-size:16px;line-height:1.82;}
 #postBody.markdown-body p,
 #postBody.markdown-body ul,
 #postBody.markdown-body ol,
-#postBody.markdown-body blockquote{margin-top:0;margin-bottom:1.05em;}
+#postBody.markdown-body blockquote{margin-top:0;margin-bottom:1.08em;}
 #postBody.markdown-body h1,
 #postBody.markdown-body h2,
 #postBody.markdown-body h3,
 #postBody.markdown-body h4,
 #postBody.markdown-body h5,
-#postBody.markdown-body h6{line-height:1.35;}
+#postBody.markdown-body h6{line-height:1.35;margin-top:1.25em;}
 #postBody pre{margin:1em 0;border-radius:10px;}
+#postBody blockquote{border-left:3px solid var(--meek-accent);padding-left:12px;color:var(--meek-muted);}
 #cmButton{height:46px;margin-top:30px;border-radius:999px;}
 #comments{margin-top:42px;}
 .g-emoji{font-size:24px;}
 #bottomText{font-size:12px;margin-top:10px;text-align:right;color:var(--meek-muted);}
 
-.copy-feedback {
-    display: none;
-    position: absolute;
-    top: 10px;
-    right: 50px;
-    color: var(--color-fg-on-emphasis);
-    background-color: var(--color-fg-muted);
-    border-radius: 3px;
-    padding: 5px 8px;
-    font-size: 12px;
-}
+
 
 @media (max-width: 760px){
     .postTitle{font-size:24px;}
-    #postMeta{display:block;}
-    #postBody{padding:14px 12px 18px;}
+    #postBody{padding:15px 12px 20px;}
     #comments{margin-top:32px;}
 }
 </style>
@@ -180,12 +190,7 @@ a:hover{text-decoration:none;}
 </div>
         <div id="content">
 <div id="postMeta">
-    <span>2024-11-13</span>
-    <span>
-
-## 引言
-
-在现代Python开发中，数据验证和序列化是一个常见的需求。</span>
+    <span class="post-date">2024-11-13</span>
 </div>
 <div class="markdown-body" id="postBody"><h2>引言</h2>
 <p>在现代Python开发中，数据验证和序列化是一个常见的需求。无论是处理API请求、配置文件，还是数据库模型，我们都需要确保数据的类型和格式符合预期。Pydantic正是为解决这些问题而生的强大库。</p>
@@ -200,113 +205,119 @@ a:hover{text-decoration:none;}
 </ul>
 <h2>基础使用</h2>
 <h3>1. 基本模型定义</h3>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">from</span> <span class="pl-s1">datetime</span> <span class="pl-k">import</span> <span class="pl-s1">datetime</span>
-<span class="pl-k">from</span> <span class="pl-s1">typing</span> <span class="pl-k">import</span> <span class="pl-v">List</span>, <span class="pl-v">Optional</span>
-<span class="pl-k">from</span> <span class="pl-s1">pydantic</span> <span class="pl-k">import</span> <span class="pl-v">BaseModel</span>
+<pre lang="python" class="notranslate"><code class="notranslate">from datetime import datetime
+from typing import List, Optional
+from pydantic import BaseModel
 
-<span class="pl-k">class</span> <span class="pl-v">User</span>(<span class="pl-v">BaseModel</span>):
-    <span class="pl-s1">id</span>: <span class="pl-smi">int</span>
-    <span class="pl-s1">name</span>: <span class="pl-smi">str</span>
-    <span class="pl-s1">email</span>: <span class="pl-smi">str</span>
-    <span class="pl-s1">age</span>: <span class="pl-v">Optional</span>[<span class="pl-smi">int</span>] <span class="pl-c1">=</span> <span class="pl-c1">None</span>
-    <span class="pl-s1">created_at</span>: <span class="pl-smi">datetime</span>
-    <span class="pl-s1">tags</span>: <span class="pl-v">List</span>[<span class="pl-smi">str</span>] <span class="pl-c1">=</span> []
+class User(BaseModel):
+    id: int
+    name: str
+    email: str
+    age: Optional[int] = None
+    created_at: datetime
+    tags: List[str] = []
 
-<span class="pl-c"># 创建用户实例</span>
-<span class="pl-s1">user</span> <span class="pl-c1">=</span> <span class="pl-en">User</span>(
-    <span class="pl-s1">id</span><span class="pl-c1">=</span><span class="pl-c1">1</span>,
-    <span class="pl-s1">name</span><span class="pl-c1">=</span><span class="pl-s">"张三"</span>,
-    <span class="pl-s1">email</span><span class="pl-c1">=</span><span class="pl-s">"zhangsan@example.com"</span>,
-    <span class="pl-s1">created_at</span><span class="pl-c1">=</span><span class="pl-s">"2024-01-01T00:00:00"</span>
+# 创建用户实例
+user = User(
+    id=1,
+    name="张三",
+    email="zhangsan@example.com",
+    created_at="2024-01-01T00:00:00"
 )
 
-<span class="pl-en">print</span>(<span class="pl-s1">user</span>.<span class="pl-c1">model_dump</span>())  <span class="pl-c"># 将模型转换为字典</span></pre></div>
+print(user.model_dump())  # 将模型转换为字典
+</code></pre>
 <h3>2. 数据验证</h3>
 <p>Pydantic会自动进行类型检查和数据验证：</p>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">from</span> <span class="pl-s1">pydantic</span> <span class="pl-k">import</span> <span class="pl-v">BaseModel</span>, <span class="pl-v">EmailStr</span>, <span class="pl-s1">conint</span>, <span class="pl-s1">constr</span>
+<pre lang="python" class="notranslate"><code class="notranslate">from pydantic import BaseModel, EmailStr, conint, constr
 
-<span class="pl-k">class</span> <span class="pl-v">UserProfile</span>(<span class="pl-v">BaseModel</span>):
-    <span class="pl-s1">username</span>: <span class="pl-en">constr</span>(<span class="pl-s1">min_length</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">max_length</span><span class="pl-c1">=</span><span class="pl-c1">50</span>)  <span class="pl-c"># 用户名长度限制</span>
-    <span class="pl-s1">age</span>: <span class="pl-en">conint</span>(<span class="pl-s1">ge</span><span class="pl-c1">=</span><span class="pl-c1">0</span>, <span class="pl-s1">le</span><span class="pl-c1">=</span><span class="pl-c1">150</span>)  <span class="pl-c"># 年龄范围限制</span>
-    <span class="pl-s1">email</span>: <span class="pl-smi">EmailStr</span>  <span class="pl-c"># 邮箱格式验证</span>
+class UserProfile(BaseModel):
+    username: constr(min_length=3, max_length=50)  # 用户名长度限制
+    age: conint(ge=0, le=150)  # 年龄范围限制
+    email: EmailStr  # 邮箱格式验证
     
-<span class="pl-k">try</span>:
-    <span class="pl-s1">user</span> <span class="pl-c1">=</span> <span class="pl-en">UserProfile</span>(
-        <span class="pl-s1">username</span><span class="pl-c1">=</span><span class="pl-s">"a"</span>,  <span class="pl-c"># 会触发验证错误</span>
-        <span class="pl-s1">age</span><span class="pl-c1">=</span><span class="pl-c1">200</span>,      <span class="pl-c"># 会触发验证错误</span>
-        <span class="pl-s1">email</span><span class="pl-c1">=</span><span class="pl-s">"invalid-email"</span>  <span class="pl-c"># 会触发验证错误</span>
+try:
+    user = UserProfile(
+        username="a",  # 会触发验证错误
+        age=200,      # 会触发验证错误
+        email="invalid-email"  # 会触发验证错误
     )
-<span class="pl-k">except</span> <span class="pl-v">ValueError</span> <span class="pl-k">as</span> <span class="pl-s1">e</span>:
-    <span class="pl-en">print</span>(<span class="pl-s">f"验证错误: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">e</span><span class="pl-kos">}</span></span>"</span>)</pre></div>
+except ValueError as e:
+    print(f"验证错误: {e}")
+</code></pre>
 <h3>3. 嵌套模型</h3>
 <p>Pydantic支持模型嵌套：</p>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">from</span> <span class="pl-s1">typing</span> <span class="pl-k">import</span> <span class="pl-v">List</span>
+<pre lang="python" class="notranslate"><code class="notranslate">from typing import List
 
-<span class="pl-k">from</span> <span class="pl-s1">pydantic</span> <span class="pl-k">import</span> <span class="pl-v">BaseModel</span>
+from pydantic import BaseModel
 
 
-<span class="pl-k">class</span> <span class="pl-v">Address</span>(<span class="pl-v">BaseModel</span>):
-    <span class="pl-s1">street</span>: <span class="pl-smi">str</span>
-    <span class="pl-s1">city</span>: <span class="pl-smi">str</span>
-    <span class="pl-s1">country</span>: <span class="pl-smi">str</span>
+class Address(BaseModel):
+    street: str
+    city: str
+    country: str
 
-<span class="pl-k">class</span> <span class="pl-v">User</span>(<span class="pl-v">BaseModel</span>):
-    <span class="pl-s1">name</span>: <span class="pl-smi">str</span>
-    <span class="pl-s1">addresses</span>: <span class="pl-v">List</span>[<span class="pl-smi">Address</span>]
+class User(BaseModel):
+    name: str
+    addresses: List[Address]
 
-<span class="pl-c"># 使用嵌套模型</span>
-<span class="pl-s1">user</span> <span class="pl-c1">=</span> <span class="pl-en">User</span>(
-    <span class="pl-s1">name</span><span class="pl-c1">=</span><span class="pl-s">"李四"</span>,
-    <span class="pl-s1">addresses</span><span class="pl-c1">=</span>[
-        {<span class="pl-s">"street"</span>: <span class="pl-s">"中关村大街"</span>, <span class="pl-s">"city"</span>: <span class="pl-s">"北京"</span>, <span class="pl-s">"country"</span>: <span class="pl-s">"中国"</span>},
-        {<span class="pl-s">"street"</span>: <span class="pl-s">"浦东新区"</span>, <span class="pl-s">"city"</span>: <span class="pl-s">"上海"</span>, <span class="pl-s">"country"</span>: <span class="pl-s">"中国"</span>}
+# 使用嵌套模型
+user = User(
+    name="李四",
+    addresses=[
+        {"street": "中关村大街", "city": "北京", "country": "中国"},
+        {"street": "浦东新区", "city": "上海", "country": "中国"}
     ]
-)</pre></div>
+)
+</code></pre>
 <h2>高级特性</h2>
 <h3>1. 字段验证器</h3>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">from</span> <span class="pl-s1">pydantic</span> <span class="pl-k">import</span> <span class="pl-v">BaseModel</span>, <span class="pl-s1">field_validator</span>
+<pre lang="python" class="notranslate"><code class="notranslate">from pydantic import BaseModel, field_validator
 
 
-<span class="pl-k">class</span> <span class="pl-v">Product</span>(<span class="pl-v">BaseModel</span>):
-    <span class="pl-s1">name</span>: <span class="pl-smi">str</span>
-    <span class="pl-s1">price</span>: <span class="pl-smi">float</span>
-    <span class="pl-s1">quantity</span>: <span class="pl-smi">int</span>
+class Product(BaseModel):
+    name: str
+    price: float
+    quantity: int
 
-    <span class="pl-en">@<span class="pl-en">field_validator</span>(<span class="pl-s">'price'</span>)</span>
-    <span class="pl-k">def</span> <span class="pl-en">validate_price</span>(<span class="pl-s1">cls</span>, <span class="pl-s1">v</span>):
-        <span class="pl-k">if</span> <span class="pl-s1">v</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">0</span>:
-            <span class="pl-k">raise</span> <span class="pl-en">ValueError</span>(<span class="pl-s">'价格不能为负数'</span>)
-        <span class="pl-k">return</span> <span class="pl-s1">v</span>
+    @field_validator('price')
+    def validate_price(cls, v):
+        if v &lt; 0:
+            raise ValueError('价格不能为负数')
+        return v
 
-    <span class="pl-en">@<span class="pl-en">field_validator</span>(<span class="pl-s">'quantity'</span>)</span>
-    <span class="pl-k">def</span> <span class="pl-en">validate_quantity</span>(<span class="pl-s1">cls</span>, <span class="pl-s1">v</span>):
-        <span class="pl-k">if</span> <span class="pl-s1">v</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">0</span>:
-            <span class="pl-k">raise</span> <span class="pl-en">ValueError</span>(<span class="pl-s">'数量不能为负数'</span>)
-        <span class="pl-k">return</span> <span class="pl-s1">v</span></pre></div>
+    @field_validator('quantity')
+    def validate_quantity(cls, v):
+        if v &lt; 0:
+            raise ValueError('数量不能为负数')
+        return v
+</code></pre>
 <h3>2. 配置选项</h3>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">from</span> <span class="pl-s1">pydantic</span> <span class="pl-k">import</span> <span class="pl-v">BaseModel</span>
+<pre lang="python" class="notranslate"><code class="notranslate">from pydantic import BaseModel
 
-<span class="pl-k">class</span> <span class="pl-v">User</span>(<span class="pl-v">BaseModel</span>):
-    <span class="pl-s1">username</span>: <span class="pl-smi">str</span>
-    <span class="pl-s1">password</span>: <span class="pl-smi">str</span>
+class User(BaseModel):
+    username: str
+    password: str
 
-    <span class="pl-k">class</span> <span class="pl-v">Config</span>:
-        <span class="pl-c"># 允许额外字段</span>
-        <span class="pl-s1">extra</span> <span class="pl-c1">=</span> <span class="pl-s">"allow"</span>
-        <span class="pl-c"># 在模型转储时排除某些字段</span>
-        <span class="pl-s1">json_encoders</span> <span class="pl-c1">=</span> {
-            <span class="pl-s1">datetime</span>: <span class="pl-k">lambda</span> <span class="pl-s1">v</span>: <span class="pl-s1">v</span>.<span class="pl-c1">strftime</span>(<span class="pl-s">"%Y-%m-%d"</span>)
-        }</pre></div>
+    class Config:
+        # 允许额外字段
+        extra = "allow"
+        # 在模型转储时排除某些字段
+        json_encoders = {
+            datetime: lambda v: v.strftime("%Y-%m-%d")
+        }
+</code></pre>
 <h3>3. 类型别名</h3>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">from</span> <span class="pl-s1">typing</span> <span class="pl-k">import</span> <span class="pl-v">Dict</span>
-<span class="pl-k">from</span> <span class="pl-s1">pydantic</span> <span class="pl-k">import</span> <span class="pl-v">BaseModel</span>
+<pre lang="python" class="notranslate"><code class="notranslate">from typing import Dict
+from pydantic import BaseModel
 
-<span class="pl-v">JsonDict</span> <span class="pl-c1">=</span> <span class="pl-v">Dict</span>[<span class="pl-s1">str</span>, <span class="pl-s1">any</span>]
+JsonDict = Dict[str, any]
 
-<span class="pl-k">class</span> <span class="pl-v">APIResponse</span>(<span class="pl-v">BaseModel</span>):
-    <span class="pl-s1">status</span>: <span class="pl-smi">int</span>
-    <span class="pl-s1">data</span>: <span class="pl-smi">JsonDict</span>
-    <span class="pl-s1">message</span>: <span class="pl-smi">str</span></pre></div>
+class APIResponse(BaseModel):
+    status: int
+    data: JsonDict
+    message: str
+</code></pre>
 <h2>最佳实践</h2>
 <ol>
 <li>
@@ -316,54 +327,59 @@ a:hover{text-decoration:none;}
 <p><strong>验证器链</strong>：当需要多个验证器时，使用装饰器的顺序很重要：</p>
 </li>
 </ol>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">class</span> <span class="pl-v">User</span>(<span class="pl-v">BaseModel</span>):
-    <span class="pl-s1">password</span>: <span class="pl-smi">str</span>
+<pre lang="python" class="notranslate"><code class="notranslate">class User(BaseModel):
+    password: str
 
-    <span class="pl-en">@<span class="pl-en">validator</span>(<span class="pl-s">'password'</span>)</span>
-    <span class="pl-k">def</span> <span class="pl-en">password_min_length</span>(<span class="pl-s1">cls</span>, <span class="pl-s1">v</span>):
-        <span class="pl-k">if</span> <span class="pl-en">len</span>(<span class="pl-s1">v</span>) <span class="pl-c1">&lt;</span> <span class="pl-c1">8</span>:
-            <span class="pl-k">raise</span> <span class="pl-en">ValueError</span>(<span class="pl-s">'密码长度至少为8位'</span>)
-        <span class="pl-k">return</span> <span class="pl-s1">v</span>
+    @validator('password')
+    def password_min_length(cls, v):
+        if len(v) &lt; 8:
+            raise ValueError('密码长度至少为8位')
+        return v
 
-    <span class="pl-en">@<span class="pl-en">validator</span>(<span class="pl-s">'password'</span>)</span>
-    <span class="pl-k">def</span> <span class="pl-en">password_contain_number</span>(<span class="pl-s1">cls</span>, <span class="pl-s1">v</span>):
-        <span class="pl-k">if</span> <span class="pl-c1">not</span> <span class="pl-en">any</span>(<span class="pl-s1">c</span>.<span class="pl-c1">isdigit</span>() <span class="pl-k">for</span> <span class="pl-s1">c</span> <span class="pl-c1">in</span> <span class="pl-s1">v</span>):
-            <span class="pl-k">raise</span> <span class="pl-en">ValueError</span>(<span class="pl-s">'密码必须包含数字'</span>)
-        <span class="pl-k">return</span> <span class="pl-s1">v</span></pre></div>
+    @validator('password')
+    def password_contain_number(cls, v):
+        if not any(c.isdigit() for c in v):
+            raise ValueError('密码必须包含数字')
+        return v
+</code></pre>
 <ol start="3">
 <li><strong>错误处理</strong>：使用try-except优雅地处理验证错误：</li>
 </ol>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">try</span>:
-    <span class="pl-s1">user</span> <span class="pl-c1">=</span> <span class="pl-en">User</span>(<span class="pl-s1">password</span><span class="pl-c1">=</span><span class="pl-s">"weak"</span>)
-<span class="pl-k">except</span> <span class="pl-v">ValueError</span> <span class="pl-k">as</span> <span class="pl-s1">e</span>:
-    <span class="pl-en">print</span>(<span class="pl-s">f"验证错误: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">e</span><span class="pl-kos">}</span></span>"</span>)</pre></div>
+<pre lang="python" class="notranslate"><code class="notranslate">try:
+    user = User(password="weak")
+except ValueError as e:
+    print(f"验证错误: {e}")
+</code></pre>
 <h2>性能优化</h2>
 <ol>
 <li><strong>使用<code class="notranslate">Config.arbitrary_types_allowed</code></strong>：当需要使用自定义类型时。</li>
 </ol>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">class</span> <span class="pl-v">Config</span>:
-    <span class="pl-s1">arbitrary_types_allowed</span> <span class="pl-c1">=</span> <span class="pl-c1">True</span></pre></div>
+<pre lang="python" class="notranslate"><code class="notranslate">class Config:
+    arbitrary_types_allowed = True
+</code></pre>
 <ol start="2">
 <li><strong>使用<code class="notranslate">Config.validate_assignment</code></strong>：在需要验证属性赋值时启用。</li>
 </ol>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">class</span> <span class="pl-v">Config</span>:
-    <span class="pl-s1">validate_assignment</span> <span class="pl-c1">=</span> <span class="pl-c1">True</span></pre></div>
+<pre lang="python" class="notranslate"><code class="notranslate">class Config:
+    validate_assignment = True
+</code></pre>
 <h2>与其他框架集成</h2>
 <h3>FastAPI集成</h3>
 <p>Pydantic与FastAPI的完美集成是其最常见的使用场景之一：</p>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">from</span> <span class="pl-s1">fastapi</span> <span class="pl-k">import</span> <span class="pl-v">FastAPI</span>
-<span class="pl-k">from</span> <span class="pl-s1">pydantic</span> <span class="pl-k">import</span> <span class="pl-v">BaseModel</span>
+<pre lang="python" class="notranslate"><code class="notranslate">from fastapi import FastAPI
+from pydantic import BaseModel
 
-<span class="pl-s1">app</span> <span class="pl-c1">=</span> <span class="pl-en">FastAPI</span>()
+app = FastAPI()
 
-<span class="pl-k">class</span> <span class="pl-v">Item</span>(<span class="pl-v">BaseModel</span>):
-    <span class="pl-s1">name</span>: <span class="pl-smi">str</span>
-    <span class="pl-s1">price</span>: <span class="pl-smi">float</span>
-    <span class="pl-s1">is_offer</span>: <span class="pl-smi">bool</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>
+class Item(BaseModel):
+    name: str
+    price: float
+    is_offer: bool = None
 
-<span class="pl-en">@<span class="pl-s1">app</span>.<span class="pl-c1">post</span>(<span class="pl-s">"/items/"</span>)</span>
-<span class="pl-k">async</span> <span class="pl-k">def</span> <span class="pl-en">create_item</span>(<span class="pl-s1">item</span>: <span class="pl-smi">Item</span>):
-    <span class="pl-k">return</span> <span class="pl-s1">item</span></pre></div>
+@app.post("/items/")
+async def create_item(item: Item):
+    return item
+</code></pre>
 <h2>结论</h2>
 <p>Pydantic是一个强大的数据验证工具，它不仅能够帮助我们保证数据的正确性，还能提供良好的开发体验。通过本文的介绍，我们了解了Pydantic的基本用法和高级特性，掌握这些知识将帮助我们在实际开发中更好地处理数据验证的需求。</p></div>
 <div id="bottomText"></div>
@@ -391,7 +407,7 @@ if("06/09/2014"!=""){
     </div>
 </body>
 <script>
-var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
 var utterancesLoad=0;
 
 let themeSettings={
@@ -464,70 +480,7 @@ function iFrameLoading(){
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const createClipboardHTML = (codeContent, additionalClasses = '') => `
-        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
-        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
-            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
-                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
-                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
-            </clipboard-copy>
-            <div class="copy-feedback">Copied!</div>
-        </div>
-    `;
 
-    const handleCodeElements = (selector = '') => {
-        document.querySelectorAll(selector).forEach(codeElement => {
-            const codeContent = codeElement.innerHTML;
-            const newStructure = document.createElement('div');
-            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
-            newStructure.innerHTML = createClipboardHTML(codeContent);
-
-            const parentElement = codeElement.parentElement;
-            if (selector.includes('highlight')) {
-                parentElement.insertBefore(newStructure, codeElement.nextSibling);
-                parentElement.removeChild(codeElement);
-            } else {
-                parentElement.parentElement.replaceChild(newStructure, parentElement);
-            }
-        });
-    };
-
-    handleCodeElements('pre.notranslate > code.notranslate');
-    handleCodeElements('div.highlight > pre.notranslate');
-
-    let currentFeedback = null;
-    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
-        copyButton.addEventListener('click', () => {
-            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
-            const tempTextArea = document.createElement('textarea');
-            tempTextArea.value = codeContent;
-            document.body.appendChild(tempTextArea);
-            tempTextArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempTextArea);
-
-            const copyIcon = copyButton.querySelector('.octicon-copy');
-            const checkIcon = copyButton.querySelector('.octicon-check');
-            const copyFeedback = copyButton.nextElementSibling;
-
-            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
-            currentFeedback = copyFeedback;
-
-            copyIcon.classList.add('d-none');
-            checkIcon.classList.remove('d-none');
-            copyFeedback.style.display = 'block';
-            copyButton.style.borderColor = 'var(--color-success-fg)';
-
-            setTimeout(() => {
-                copyIcon.classList.remove('d-none');
-                checkIcon.classList.add('d-none');
-                copyFeedback.style.display = 'none';
-                copyButton.style.borderColor = '';
-            }, 2000);
-        });
-    });
-});
 
 </script>
 
